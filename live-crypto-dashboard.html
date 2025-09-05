@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>?? WatchDOG LIVE - Advanced Crypto Trading Signals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status-indicators {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-connected { background: #10b981; }
+        .status-scanning { background: #f59e0b; }
+        .status-error { background: #ef4444; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+        
+        .sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: fit-content;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: #3b82f6;
+            font-size: 1.125rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #60a5fa;
+        }
+        
+        .predictions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .prediction-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .prediction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+        }
+        
+        .prediction-card.long {
+            border-left: 4px solid #10b981;
+        }
+        
+        .prediction-card.short {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .symbol {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .direction {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .direction.long {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .direction.short {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .confidence-circle {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 1rem auto;
+        }
+        
+        .confidence-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #3b82f6 var(--progress), #1e293b var(--progress));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .confidence-ring::before {
+            content: '';
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #0f172a;
+            position: absolute;
+        }
+        
+        .confidence-text {
+            position: relative;
+            z-index: 2;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-value-large {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .countdown {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .countdown-time {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+        
+        .indicators {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .indicator-chip {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .indicator-positive {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .indicator-negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .indicator-neutral {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .card-count {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .card-count.positive {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .card-count.negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            font-size: 1.125rem;
+            color: #94a3b8;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.2);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .no-predictions {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+            grid-column: 1 / -1;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span>??</span>
+                WatchDOG LIVE
+            </div>
+            <div class="status-indicators">
+                <div class="status-item">
+                    <div class="status-dot" id="connectionStatus"></div>
+                    <span id="connectionText">Connecting...</span>
+                </div>
+                <div class="status-item">
+                    <span id="lastUpdate">Never</span>
+                </div>
+                <button class="refresh-btn" onclick="forceRefresh()">
+                    ?? Force Scan
+                </button>
+                <button class="refresh-btn" onclick="cleanupDuplicates()" style="background: linear-gradient(45deg, #f59e0b, #d97706);">
+                    ?? Clean Duplicates
+                </button>
+                <button class="refresh-btn" onclick="testConnection()" style="background: linear-gradient(45deg, #8b5cf6, #7c3aed);">
+                    ?? Test API
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>?? Scanner Status</h3>
+            <div class="stat-item">
+                <span>Status</span>
+                <span class="stat-value" id="scannerStatus">Unknown</span>
+            </div>
+            <div class="stat-item">
+                <span>Active Predictions</span>
+                <span class="stat-value" id="activePredictions">0/10</span>
+            </div>
+            <div class="stat-item">
+                <span>Symbols Scanned</span>
+                <span class="stat-value" id="symbolsScanned">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Success Rate</span>
+                <span class="stat-value" id="successRate">0%</span>
+            </div>
+            <div class="stat-item">
+                <span>Uptime</span>
+                <span class="stat-value" id="uptime">0s</span>
+            </div>
+            <div class="stat-item">
+                <span>Errors</span>
+                <span class="stat-value" id="errorCount">0</span>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">?? Quick Stats</h3>
+            <div class="stat-item">
+                <span>Long Signals</span>
+                <span class="stat-value" id="longCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Short Signals</span>
+                <span class="stat-value" id="shortCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Avg Confidence</span>
+                <span class="stat-value" id="avgConfidence">0%</span>
+            </div>
+        </aside>
+
+        <main>
+            <div id="loadingState" class="loading">
+                <div class="spinner"></div>
+                Connecting to live market scanner...
+            </div>
+            
+            <div id="predictionsContainer" class="predictions-grid" style="display: none;">
+                <!-- Live predictions will be inserted here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        let ws = null;
+        let predictions = [];
+        let scannerStatus = {};
+
+        // Connect to live backend
+        async function connectToBackend() {
+            try {
+                // Test API connection
+                const response = await fetch(`${API_BASE}/health`);
+                const health = await response.json();
+                
+                updateConnectionStatus(true);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('predictionsContainer').style.display = 'grid';
+                
+                // Get initial data
+                await fetchPredictions();
+                
+                // Connect WebSocket for real-time updates
+                connectWebSocket();
+                
+            } catch (error) {
+                console.error('Failed to connect to backend:', error);
+                updateConnectionStatus(false);
+                setTimeout(connectToBackend, 5000); // Retry in 5 seconds
+            }
+        }
+
+        function connectWebSocket() {
+            try {
+                ws = new WebSocket('ws://localhost:8000');
+                
+                ws.onopen = () => {
+                    console.log('WebSocket connected');
+                    updateConnectionStatus(true);
+                };
+                
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'predictions-update') {
+                        predictions = data.predictions;
+                        updatePredictionsDisplay();
+                        updateQuickStats();
+                    }
+                    
+                    if (data.type === 'scanner-status') {
+                        scannerStatus = data.status;
+                        updateScannerStatus();
+                    }
+                };
+                
+                ws.onclose = () => {
+                    console.log('WebSocket disconnected');
+                    updateConnectionStatus(false);
+                    setTimeout(connectWebSocket, 3000); // Reconnect
+                };
+                
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                    updateConnectionStatus(false);
+                };
+                
+            } catch (error) {
+                console.error('WebSocket connection failed:', error);
+                updateConnectionStatus(false);
+            }
+        }
+
+        async function fetchPredictions() {
+            try {
+                const response = await fetch(`${API_BASE}/predictions`);
+                predictions = await response.json();
+                updatePredictionsDisplay();
+                updateQuickStats();
+            } catch (error) {
+                console.error('Failed to fetch predictions:', error);
+            }
+        }
+
+        async function forceRefresh() {
+            try {
+                await fetch(`${API_BASE}/scan`, { method: 'POST' });
+                setTimeout(fetchPredictions, 2000); // Refresh after 2 seconds
+            } catch (error) {
+                console.error('Failed to force scan:', error);
+            }
+        }
+
+        async function cleanupDuplicates() {
+            try {
+                console.log('Attempting to cleanup duplicates...');
+                
+                // Show loading state
+                const notification = document.createElement('div');
+                notification.textContent = 'Cleaning up duplicates...';
+                notification.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 1000;
+                    background: #f59e0b; color: white; padding: 12px 20px;
+                    border-radius: 8px; font-weight: 600;
+                `;
+                document.body.appendChild(notification);
+                
+                const response = await fetch(`${API_BASE}/cleanup-duplicates`, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Cleanup result:', result);
+                
+                // Remove loading notification
+                notification.remove();
+                
+                // Show success notification
+                const successNotification = document.createElement('div');
+                successNotification.textContent = `? Removed ${result.removedCount} duplicate predictions`;
+                successNotification.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 1000;
+                    background: #10b981; color: white; padding: 12px 20px;
+                    border-radius: 8px; font-weight: 600;
+                `;
+                document.body.appendChild(successNotification);
+                setTimeout(() => successNotification.remove(), 4000);
+                
+                // Refresh predictions
+                setTimeout(fetchPredictions, 1000);
+                
+            } catch (error) {
+                console.error('Failed to cleanup duplicates:', error);
+                
+                // Show error notification
+                const errorNotification = document.createElement('div');
+                errorNotification.textContent = `? Error: ${error.message}`;
+                errorNotification.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 1000;
+                    background: #ef4444; color: white; padding: 12px 20px;
+                    border-radius: 8px; font-weight: 600;
+                `;
+                document.body.appendChild(errorNotification);
+                setTimeout(() => errorNotification.remove(), 5000);
+            }
+        }
+
+        async function testConnection() {
+            try {
+                console.log('Testing API connection...');
+                
+                const response = await fetch(`${API_BASE}/health`);
+                const result = await response.json();
+                
+                console.log('API Health:', result);
+                
+                // Show success notification with details
+                const notification = document.createElement('div');
+                notification.innerHTML = `
+                    <strong>? API Connected!</strong><br>
+                    Server: ${result.status}<br>
+                    Predictions: ${result.predictions}<br>
+                    Clients: ${result.clients}
+                `;
+                notification.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 1000;
+                    background: #10b981; color: white; padding: 12px 20px;
+                    border-radius: 8px; font-weight: 600; line-height: 1.4;
+                `;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 5000);
+                
+            } catch (error) {
+                console.error('API connection failed:', error);
+                
+                // Show error notification
+                const notification = document.createElement('div');
+                notification.innerHTML = `
+                    <strong>? API Connection Failed!</strong><br>
+                    Error: ${error.message}<br>
+                    Check if backend server is running on port 8000
+                `;
+                notification.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 1000;
+                    background: #ef4444; color: white; padding: 12px 20px;
+                    border-radius: 8px; font-weight: 600; line-height: 1.4;
+                `;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 8000);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusDot = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('connectionText');
+            
+            if (connected) {
+                statusDot.className = 'status-dot status-connected';
+                statusText.textContent = 'Connected';
+            } else {
+                statusDot.className = 'status-dot status-error';
+                statusText.textContent = 'Disconnected';
+            }
+        }
+
+        function updateScannerStatus() {
+            document.getElementById('scannerStatus').textContent = scannerStatus.isRunning ? 'Running' : 'Stopped';
+            document.getElementById('activePredictions').textContent = `${scannerStatus.activePredictions || 0}/10`;
+            document.getElementById('symbolsScanned').textContent = scannerStatus.symbolsScanned || 0;
+            document.getElementById('successRate').textContent = `${(scannerStatus.successRate || 0).toFixed(1)}%`;
+            document.getElementById('uptime').textContent = formatUptime(scannerStatus.uptime || 0);
+            document.getElementById('errorCount').textContent = scannerStatus.errorCount || 0;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        function updateQuickStats() {
+            const longCount = predictions.filter(p => p.direction === 'long').length;
+            const shortCount = predictions.filter(p => p.direction === 'short').length;
+            const avgConfidence = predictions.length > 0 ? 
+                predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length : 0;
+
+            document.getElementById('longCount').textContent = longCount;
+            document.getElementById('shortCount').textContent = shortCount;
+            document.getElementById('avgConfidence').textContent = `${avgConfidence.toFixed(1)}%`;
+        }
+
+        function updatePredictionsDisplay() {
+            const container = document.getElementById('predictionsContainer');
+            
+            if (predictions.length === 0) {
+                container.innerHTML = `
+                    <div class="no-predictions">
+                        <h3>?? WatchDOG Active</h3>
+                        <p>Analyzing market conditions and order flow for profitable opportunities...</p>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">
+                            Advanced algorithm analyzing 50+ symbols across 8 timeframes with order book depth,
+                            volume patterns, and market state detection for maximum profitability.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by confidence
+            const sortedPredictions = [...predictions].sort((a, b) => b.confidence - a.confidence);
+
+            container.innerHTML = sortedPredictions.map(prediction => {
+                const timeLeft = Math.max(0, new Date(prediction.expiresAt).getTime() - Date.now());
+                const timeLeftMinutes = Math.floor(timeLeft / (1000 * 60));
+                const timeLeftSeconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                
+                // Format market analysis if available
+                let marketAnalysisHTML = '';
+                if (prediction.marketState && prediction.profitabilityScore) {
+                    const marketState = prediction.marketState;
+                    const profitScore = prediction.profitabilityScore;
+                    
+                    // Profitability indicator
+                    let profitLevel = '?? MODERATE';
+                    let profitColor = '#f59e0b';
+                    if (profitScore >= 80) {
+                        profitLevel = '?? EXCELLENT';
+                        profitColor = '#10b981';
+                    } else if (profitScore >= 60) {
+                        profitLevel = '?? GOOD';
+                        profitColor = '#3b82f6';
+                    } else if (profitScore < 40) {
+                        profitLevel = '?? RISKY';
+                        profitColor = '#ef4444';
+                    }
+                    
+                    // Market context
+                    const trendEmoji = marketState.trend === 'bull' ? '??' : marketState.trend === 'bear' ? '??' : '??';
+                    const momentumEmoji = marketState.momentum === 'accelerating' ? '?' : 
+                                         marketState.momentum === 'decelerating' ? '??' : '??';
+                    
+                    marketAnalysisHTML = `
+                        <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 3px solid ${profitColor};">
+                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; color: ${profitColor};">
+                                ${profitLevel} (${profitScore.toFixed(0)}% Profit Score)
+                            </div>
+                            <div style="font-size: 0.75rem; line-height: 1.4;">
+                                <div><strong>Market:</strong> ${trendEmoji} ${marketState.trend.toUpperCase()} ${momentumEmoji} ${marketState.momentum}</div>
+                                <div><strong>Volatility:</strong> ${marketState.volatility.toUpperCase()} | <strong>Strength:</strong> ${(marketState.strength * 100).toFixed(0)}%</div>
+                                ${prediction.volumeAnalysis ? `<div><strong>Volume:</strong> ${prediction.volumeAnalysis.volumeTrend.toUpperCase()} (${prediction.volumeAnalysis.volumeRatio.toFixed(1)}x avg)</div>` : ''}
+                                ${prediction.orderBookData ? `<div><strong>Order Flow:</strong> ${prediction.orderBookData.imbalance > 0 ? '?? Buyers' : prediction.orderBookData.imbalance < 0 ? '?? Sellers' : '? Balanced'} (${Math.abs(prediction.orderBookData.imbalance).toFixed(0)}%)</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Format target zones if available
+                let targetZonesHTML = '';
+                if (prediction.targetZones) {
+                    const zones = prediction.targetZones;
+                    const entryStatus = zones.entryZone.distanceFromEntry < 1 ? 
+                        '?? IDEAL ENTRY' : 
+                        zones.entryZone.distanceFromEntry < 3 ? 
+                        '? GOOD ENTRY' : 
+                        '?? WAIT FOR DIP';
+                    
+                    targetZonesHTML = `
+                        <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 3px solid #3b82f6;">
+                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; color: #3b82f6;">
+                                ${entryStatus}
+                            </div>
+                            <div style="font-size: 0.75rem; line-height: 1.4;">
+                                <div><strong>Entry Zone:</strong> $${zones.entryZone.min.toFixed(4)} - $${zones.entryZone.max.toFixed(4)}</div>
+                                <div><strong>Current:</strong> $${zones.entryZone.current.toFixed(4)} <span style="color: ${zones.entryZone.distanceFromEntry < 2 ? '#10b981' : '#f59e0b'}">(${zones.entryZone.distanceFromEntry.toFixed(1)}% away)</span></div>
+                                <div><strong>Stop Loss:</strong> $${zones.stopLoss.toFixed(4)}</div>
+                                <div><strong>Take Profit:</strong> $${zones.takeProfit.slice(0, 2).map(tp => tp.toFixed(4)).join(', ')}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="prediction-card ${prediction.direction}">
+                        <div class="card-count ${prediction.cardCount >= 0 ? 'positive' : 'negative'}">
+                            ${prediction.cardCount >= 0 ? '+' : ''}${prediction.cardCount}
+                        </div>
+                        
+                        <div class="card-header">
+                            <div class="symbol">${prediction.symbol}</div>
+                            <div class="direction ${prediction.direction}">
+                                ${prediction.direction === 'long' ? '??' : '??'} ${prediction.direction}
+                            </div>
+                        </div>
+                        
+                        <div class="confidence-circle">
+                            <div class="confidence-ring" style="--progress: ${prediction.confidence * 3.6}deg">
+                                <div class="confidence-text">${Math.round(prediction.confidence)}%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-label">Score</div>
+                                <div class="stat-value-large">${prediction.score.toFixed(1)}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Profit Score</div>
+                                <div class="stat-value-large" style="color: ${prediction.profitabilityScore >= 80 ? '#10b981' : prediction.profitabilityScore >= 60 ? '#3b82f6' : prediction.profitabilityScore >= 40 ? '#f59e0b' : '#ef4444'}">${prediction.profitabilityScore ? prediction.profitabilityScore.toFixed(0) + '%' : 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        ${marketAnalysisHTML}
+                        
+                        ${targetZonesHTML}
+                        
+                        <div class="countdown">
+                            <div style="font-size: 0.75rem; margin-bottom: 0.25rem;">Time Remaining</div>
+                            <div class="countdown-time">
+                                ${timeLeftMinutes}:${timeLeftSeconds.toString().padStart(2, '0')}
+                            </div>
+                        </div>
+                        
+                        <div class="indicators">
+                            ${Object.entries(prediction.indicatorsHit || {}).slice(0, 6).map(([indicator, value]) => {
+                                // Parse the indicator name to get the actual indicator type
+                                const indicatorName = indicator.split('_')[0]; // Get base name (RSI, MACD, etc.)
+                                const timeframe = indicator.includes('_') ? indicator.split('_')[1] : '';
+                                const direction = indicator.includes('_') ? indicator.split('_')[2] : '';
+                                
+                                // Determine color based on direction and value
+                                let chipClass = 'indicator-neutral';
+                                if (direction === 'long' || value > 0) {
+                                    chipClass = 'indicator-positive';
+                                } else if (direction === 'short' || value < 0) {
+                                    chipClass = 'indicator-negative';
+                                }
+                                
+                                return `
+                                    <div class="indicator-chip ${chipClass}" title="${indicator}: ${value.toFixed(2)}">
+                                        ${indicatorName}${timeframe ? '-' + timeframe : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                            ${Object.keys(prediction.indicatorsHit || {}).length > 6 ? 
+                                `<div class="indicator-chip" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8;">
+                                    +${Object.keys(prediction.indicatorsHit).length - 6} more
+                                </div>` : ''
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatUptime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            
+            if (hours > 0) return `${hours}h ${minutes % 60}m`;
+            if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+            return `${seconds}s`;
+        }
+
+        // Start the connection
+        connectToBackend();
+        
+        // Update countdowns every second
+        setInterval(() => {
+            if (predictions.length > 0) {
+                updatePredictionsDisplay();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
