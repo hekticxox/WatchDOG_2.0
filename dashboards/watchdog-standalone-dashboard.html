@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>?? WatchDOG LIVE - Advanced Crypto Trading Signals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status-indicators {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-connected { background: #10b981; }
+        .status-scanning { background: #f59e0b; }
+        .status-error { background: #ef4444; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+        
+        .sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: fit-content;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: #3b82f6;
+            font-size: 1.125rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #60a5fa;
+        }
+        
+        .predictions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .prediction-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .prediction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+        }
+        
+        .prediction-card.long {
+            border-left: 4px solid #10b981;
+        }
+        
+        .prediction-card.short {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .symbol {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .direction {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .direction.long {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .direction.short {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .confidence-circle {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 1rem auto;
+        }
+        
+        .confidence-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #3b82f6 var(--progress), #1e293b var(--progress));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .confidence-ring::before {
+            content: '';
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #0f172a;
+            position: absolute;
+        }
+        
+        .confidence-text {
+            position: relative;
+            z-index: 2;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-value-large {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .countdown {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .countdown-time {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+        
+        .indicators {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .indicator-chip {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .indicator-positive {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .indicator-negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .indicator-neutral {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .card-count {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .card-count.positive {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .card-count.negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .business-banner {
+            background: linear-gradient(45deg, #10b981, #059669);
+            padding: 1rem 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            border-radius: 12px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .business-banner h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .business-banner a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .business-banner a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span>??</span>
+                WatchDOG LIVE - STANDALONE DEMO
+            </div>
+            <div class="status-indicators">
+                <div class="status-item">
+                    <div class="status-dot status-connected"></div>
+                    <span>Demo Mode</span>
+                </div>
+                <div class="status-item">
+                    <span id="lastUpdate">Live Simulation</span>
+                </div>
+                <button class="refresh-btn" onclick="generateNewSignal()">
+                    ?? Generate Signal
+                </button>
+                <button class="refresh-btn" onclick="startTelegramBot()" style="background: linear-gradient(45deg, #10b981, #059669);">
+                    ?? Start Business Bot
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="business-banner">
+        <h2>?? Your WatchDOG Signal Business is Ready!</h2>
+        <p>Bot: @WatchDOGAdmin_bot | Revenue Potential: $4,500+/month</p>
+        <a href="https://t.me/WatchDOGAdmin_bot" target="_blank">Visit Telegram Bot</a>
+    </div>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>?? Scanner Status</h3>
+            <div class="stat-item">
+                <span>Status</span>
+                <span class="stat-value">?? DEMO ACTIVE</span>
+            </div>
+            <div class="stat-item">
+                <span>Active Predictions</span>
+                <span class="stat-value" id="activePredictions">3/10</span>
+            </div>
+            <div class="stat-item">
+                <span>Symbols Scanned</span>
+                <span class="stat-value" id="symbolsScanned">42</span>
+            </div>
+            <div class="stat-item">
+                <span>Success Rate</span>
+                <span class="stat-value">74.8%</span>
+            </div>
+            <div class="stat-item">
+                <span>Uptime</span>
+                <span class="stat-value" id="uptime">0s</span>
+            </div>
+            <div class="stat-item">
+                <span>Errors</span>
+                <span class="stat-value">0</span>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">?? Business Stats</h3>
+            <div class="stat-item">
+                <span>Telegram Bot</span>
+                <span class="stat-value">?? LIVE</span>
+            </div>
+            <div class="stat-item">
+                <span>Payment System</span>
+                <span class="stat-value">?? Crypto Ready</span>
+            </div>
+            <div class="stat-item">
+                <span>Revenue Potential</span>
+                <span class="stat-value">$4,500/mo</span>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">? Signal Stats</h3>
+            <div class="stat-item">
+                <span>Long Signals</span>
+                <span class="stat-value" id="longCount">2</span>
+            </div>
+            <div class="stat-item">
+                <span>Short Signals</span>
+                <span class="stat-value" id="shortCount">1</span>
+            </div>
+            <div class="stat-item">
+                <span>Avg Confidence</span>
+                <span class="stat-value" id="avgConfidence">73.0%</span>
+            </div>
+        </aside>
+
+        <main>
+            <div id="predictionsContainer" class="predictions-grid">
+                <!-- Predictions will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let predictions = [];
+        let startTime = Date.now();
+        
+        // Your actual NMRUSDT signal as the premier example
+        const premierSignal = {
+            id: 'NMRUSDT-LIVE-87',
+            symbol: 'NMRUSDT',
+            direction: 'long',
+            score: 4.2,
+            confidence: 87,
+            estimatedRunMs: 9420000, // 157 minutes
+            createdAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 9420000).toISOString(),
+            cardCount: 2,
+            riskRewardRatio: 3.8,
+            profitabilityScore: 87,
+            marketState: {
+                trend: 'bull',
+                strength: 1.0,
+                volatility: 'medium',
+                momentum: 'accelerating',
+                confidence: 87
+            },
+            indicatorsHit: {
+                'RSI_1m': 0.85,
+                'MACD_1m': 0.92,
+                'EMA_20': 0.78,
+                'BB_upper': 0.83,
+                'Volume': 0.89,
+                'OBV_5m': 0.76
+            },
+            indicatorCount: 6,
+            positionSizing: {
+                suggestedSize: 2.8,
+                maxRisk: 1.2,
+                kellyFraction: 0.15
+            },
+            targetZones: {
+                entryZone: {
+                    min: 14.2450,
+                    max: 14.3120,
+                    current: 14.2785,
+                    distanceFromEntry: 0.8
+                },
+                stopLoss: 13.8950,
+                takeProfit: [14.8200, 15.2800, 15.7400]
+            },
+            volumeAnalysis: {
+                volumeTrend: 'increasing',
+                volumeRatio: 2.4
+            },
+            orderBookData: {
+                imbalance: 23.7
+            }
+        };
+
+        // Load initial demo data
+        function loadDemoData() {
+            predictions = [
+                premierSignal,
+                {
+                    id: 'BTC-demo-1',
+                    symbol: 'BTCUSDT',
+                    direction: 'long',
+                    score: 3.6,
+                    confidence: 76,
+                    estimatedRunMs: 7200000,
+                    createdAt: new Date(Date.now() - 1800000).toISOString(),
+                    expiresAt: new Date(Date.now() + 5400000).toISOString(),
+                    cardCount: 1,
+                    riskRewardRatio: 3.2,
+                    profitabilityScore: 78,
+                    marketState: {
+                        trend: 'bull',
+                        strength: 0.76,
+                        volatility: 'medium',
+                        momentum: 'steady',
+                        confidence: 76
+                    },
+                    indicatorsHit: {
+                        'RSI_1m': 0.68,
+                        'MACD_1m': 0.72,
+                        'EMA_20': 0.81,
+                        'BB_upper': 0.58
+                    },
+                    indicatorCount: 4,
+                    positionSizing: {
+                        suggestedSize: 2.3,
+                        maxRisk: 1.0,
+                        kellyFraction: 0.12
+                    }
+                },
+                {
+                    id: 'ETH-demo-1',
+                    symbol: 'ETHUSDT',
+                    direction: 'short',
+                    score: -2.8,
+                    confidence: 69,
+                    estimatedRunMs: 5400000,
+                    createdAt: new Date(Date.now() - 600000).toISOString(),
+                    expiresAt: new Date(Date.now() + 4800000).toISOString(),
+                    cardCount: -1,
+                    riskRewardRatio: 2.9,
+                    profitabilityScore: 71,
+                    marketState: {
+                        trend: 'bear',
+                        strength: 0.69,
+                        volatility: 'high',
+                        momentum: 'accelerating',
+                        confidence: 69
+                    },
+                    indicatorsHit: {
+                        'RSI_1m': -0.74,
+                        'MACD_1m': -0.68,
+                        'EMA_20': -0.61,
+                        'Stoch': -0.82
+                    },
+                    indicatorCount: 4,
+                    positionSizing: {
+                        suggestedSize: 1.9,
+                        maxRisk: 0.8,
+                        kellyFraction: 0.10
+                    }
+                }
+            ];
+            
+            updatePredictionsDisplay();
+            updateQuickStats();
+        }
+
+        function generateNewSignal() {
+            const symbols = ['ADAUSDT', 'LINKUSDT', 'DOTUSDT', 'AVAXUSDT', 'MATICUSDT', 'ATOMUSDT', 'SOLUSDT', 'BNBUSDT'];
+            const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+            const randomDirection = Math.random() > 0.5 ? 'long' : 'short';
+            const confidence = 60 + Math.floor(Math.random() * 25);
+            const profitScore = confidence + Math.floor(Math.random() * 10) - 5;
+            
+            const newPrediction = {
+                id: `${randomSymbol.replace('USDT', '')}-${Date.now()}`,
+                symbol: randomSymbol,
+                direction: randomDirection,
+                score: randomDirection === 'long' ? 2.0 + Math.random() * 2.0 : -(2.0 + Math.random() * 2.0),
+                confidence: confidence,
+                estimatedRunMs: 3600000 + Math.random() * 7200000,
+                createdAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 3600000 + Math.random() * 7200000).toISOString(),
+                cardCount: randomDirection === 'long' ? Math.floor(Math.random() * 3) : -Math.floor(Math.random() * 3),
+                riskRewardRatio: 2.0 + Math.random() * 1.5,
+                profitabilityScore: Math.max(50, profitScore),
+                marketState: {
+                    trend: Math.random() > 0.6 ? 'bull' : Math.random() > 0.3 ? 'bear' : 'neutral',
+                    strength: Math.random(),
+                    volatility: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)],
+                    momentum: ['accelerating', 'steady', 'decelerating'][Math.floor(Math.random() * 3)],
+                    confidence: confidence
+                },
+                indicatorsHit: {
+                    'RSI_1m': (Math.random() - 0.5) * 2,
+                    'MACD_1m': (Math.random() - 0.5) * 2,
+                    'EMA_20': (Math.random() - 0.5) * 2,
+                    'BB_upper': (Math.random() - 0.5) * 2
+                },
+                indicatorCount: Math.floor(Math.random() * 6) + 3,
+                positionSizing: {
+                    suggestedSize: Math.round((1 + Math.random() * 3) * 10) / 10,
+                    maxRisk: Math.round((0.5 + Math.random() * 1.5) * 10) / 10,
+                    kellyFraction: Math.round(Math.random() * 20) / 100
+                }
+            };
+            
+            predictions.unshift(newPrediction);
+            if (predictions.length > 6) predictions.pop();
+            
+            updatePredictionsDisplay();
+            updateQuickStats();
+            
+            // Show notification
+            const notification = document.createElement('div');
+            notification.textContent = `? New ${randomDirection} signal generated for ${randomSymbol}!`;
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1000;
+                background: #10b981; color: white; padding: 12px 20px;
+                border-radius: 8px; font-weight: 600;
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function startTelegramBot() {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <strong>?? Telegram Bot is LIVE!</strong><br>
+                Bot: @WatchDOGAdmin_bot<br>
+                Start earning with crypto signals!
+            `;
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1000;
+                background: #10b981; color: white; padding: 12px 20px;
+                border-radius: 8px; font-weight: 600; line-height: 1.4;
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+            
+            // Open Telegram bot
+            window.open('https://t.me/WatchDOGAdmin_bot', '_blank');
+        }
+
+        function updateQuickStats() {
+            const longCount = predictions.filter(p => p.direction === 'long').length;
+            const shortCount = predictions.filter(p => p.direction === 'short').length;
+            const avgConfidence = predictions.length > 0 ? 
+                predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length : 0;
+
+            document.getElementById('longCount').textContent = longCount;
+            document.getElementById('shortCount').textContent = shortCount;
+            document.getElementById('avgConfidence').textContent = `${avgConfidence.toFixed(1)}%`;
+            document.getElementById('activePredictions').textContent = `${predictions.length}/10`;
+        }
+
+        function updatePredictionsDisplay() {
+            const container = document.getElementById('predictionsContainer');
+            
+            const sortedPredictions = [...predictions].sort((a, b) => b.confidence - a.confidence);
+
+            container.innerHTML = sortedPredictions.map(prediction => {
+                const timeLeft = Math.max(0, new Date(prediction.expiresAt).getTime() - Date.now());
+                const timeLeftMinutes = Math.floor(timeLeft / (1000 * 60));
+                const timeLeftSeconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                
+                // Format market analysis
+                let marketAnalysisHTML = '';
+                if (prediction.marketState && prediction.profitabilityScore) {
+                    const marketState = prediction.marketState;
+                    const profitScore = prediction.profitabilityScore;
+                    
+                    let profitLevel = '?? MODERATE';
+                    let profitColor = '#f59e0b';
+                    if (profitScore >= 80) {
+                        profitLevel = '?? EXCELLENT';
+                        profitColor = '#10b981';
+                    } else if (profitScore >= 60) {
+                        profitLevel = '?? GOOD';
+                        profitColor = '#3b82f6';
+                    } else if (profitScore < 40) {
+                        profitLevel = '?? RISKY';
+                        profitColor = '#ef4444';
+                    }
+                    
+                    const trendEmoji = marketState.trend === 'bull' ? '??' : marketState.trend === 'bear' ? '??' : '??';
+                    const momentumEmoji = marketState.momentum === 'accelerating' ? '?' : 
+                                         marketState.momentum === 'decelerating' ? '??' : '??';
+                    
+                    marketAnalysisHTML = `
+                        <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 3px solid ${profitColor};">
+                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; color: ${profitColor};">
+                                ${profitLevel} (${profitScore.toFixed(0)}% Profit Score)
+                            </div>
+                            <div style="font-size: 0.75rem; line-height: 1.4;">
+                                <div><strong>Market:</strong> ${trendEmoji} ${marketState.trend.toUpperCase()} ${momentumEmoji} ${marketState.momentum}</div>
+                                <div><strong>Volatility:</strong> ${marketState.volatility.toUpperCase()} | <strong>Strength:</strong> ${(marketState.strength * 100).toFixed(0)}%</div>
+                                ${prediction.volumeAnalysis ? `<div><strong>Volume:</strong> ${prediction.volumeAnalysis.volumeTrend.toUpperCase()} (${prediction.volumeAnalysis.volumeRatio.toFixed(1)}x avg)</div>` : ''}
+                                ${prediction.orderBookData ? `<div><strong>Order Flow:</strong> ${prediction.orderBookData.imbalance > 0 ? '?? Buyers' : prediction.orderBookData.imbalance < 0 ? '?? Sellers' : '? Balanced'} (${Math.abs(prediction.orderBookData.imbalance).toFixed(0)}%)</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Format position sizing
+                let positionSizingHTML = '';
+                if (prediction.positionSizing) {
+                    const sizing = prediction.positionSizing;
+                    const riskLevel = sizing.maxRisk > 2 ? '?? HIGH RISK' : sizing.maxRisk > 1 ? '?? MODERATE' : '?? LOW RISK';
+                    const sizeRecommendation = sizing.suggestedSize > 4 ? '?? LARGE' : sizing.suggestedSize > 2 ? '?? MEDIUM' : '?? SMALL';
+                    
+                    positionSizingHTML = `
+                        <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 3px solid #10b981;">
+                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; color: #10b981;">
+                                ?? POSITION SIZING ${riskLevel}
+                            </div>
+                            <div style="font-size: 0.75rem; line-height: 1.4;">
+                                <div><strong>Suggested Size:</strong> ${sizeRecommendation} ${sizing.suggestedSize}% of portfolio</div>
+                                <div><strong>Max Risk:</strong> ${sizing.maxRisk}% per trade</div>
+                                <div><strong>Kelly Fraction:</strong> ${sizing.kellyFraction.toFixed(2)}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="prediction-card ${prediction.direction}">
+                        <div class="card-count ${prediction.cardCount >= 0 ? 'positive' : 'negative'}">
+                            ${prediction.cardCount >= 0 ? '+' : ''}${prediction.cardCount}
+                        </div>
+                        
+                        <div class="card-header">
+                            <div class="symbol">${prediction.symbol}</div>
+                            <div class="direction ${prediction.direction}">
+                                ${prediction.direction === 'long' ? '??' : '??'} ${prediction.direction}
+                            </div>
+                        </div>
+                        
+                        <div class="confidence-circle">
+                            <div class="confidence-ring" style="--progress: ${prediction.confidence * 3.6}deg">
+                                <div class="confidence-text">${Math.round(prediction.confidence)}%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-label">Score</div>
+                                <div class="stat-value-large">${prediction.score.toFixed(1)}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Profit Score</div>
+                                <div class="stat-value-large" style="color: ${prediction.profitabilityScore >= 80 ? '#10b981' : prediction.profitabilityScore >= 60 ? '#3b82f6' : prediction.profitabilityScore >= 40 ? '#f59e0b' : '#ef4444'}">${prediction.profitabilityScore ? prediction.profitabilityScore.toFixed(0) + '%' : 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        ${marketAnalysisHTML}
+                        ${positionSizingHTML}
+                        
+                        <div class="countdown">
+                            <div style="font-size: 0.75rem; margin-bottom: 0.25rem;">Time Remaining</div>
+                            <div class="countdown-time">
+                                ${timeLeftMinutes}:${timeLeftSeconds.toString().padStart(2, '0')}
+                            </div>
+                        </div>
+                        
+                        <div class="indicators">
+                            ${Object.entries(prediction.indicatorsHit || {}).slice(0, 6).map(([indicator, value]) => {
+                                const indicatorName = indicator.split('_')[0];
+                                const timeframe = indicator.includes('_') ? indicator.split('_')[1] : '';
+                                
+                                let chipClass = 'indicator-neutral';
+                                if (typeof value === 'number') {
+                                    if (value > 0.3) {
+                                        chipClass = 'indicator-positive';
+                                    } else if (value < -0.3) {
+                                        chipClass = 'indicator-negative';
+                                    }
+                                }
+                                
+                                return `
+                                    <div class="indicator-chip ${chipClass}" title="${indicator}: ${typeof value === 'number' ? value.toFixed(2) : value}">
+                                        ${indicatorName}${timeframe ? '-' + timeframe : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update uptime
+        function updateUptime() {
+            const uptime = Date.now() - startTime;
+            const seconds = Math.floor(uptime / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            
+            let uptimeText;
+            if (hours > 0) uptimeText = `${hours}h ${minutes % 60}m`;
+            else if (minutes > 0) uptimeText = `${minutes}m ${seconds % 60}s`;
+            else uptimeText = `${seconds}s`;
+            
+            document.getElementById('uptime').textContent = uptimeText;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Initialize
+        loadDemoData();
+        setInterval(updateUptime, 1000);
+        
+        // Update countdowns every second
+        setInterval(() => {
+            updatePredictionsDisplay();
+        }, 1000);
+        
+        // Generate new signals periodically
+        setInterval(() => {
+            if (Math.random() > 0.7) { // 30% chance every 30 seconds
+                generateNewSignal();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

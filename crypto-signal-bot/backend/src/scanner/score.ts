@@ -24,45 +24,77 @@ export function computeScore(features: IndicatorFeature[], cardCount: number): {
   indicatorCount: number;
   breakdown: Record<string, number>;
 } {
-  // Copilot: implement a weighted scoring algorithm:
-  // - group by timeframe and direction
-  // - sum base weights * strength
-  // - if >=3 indicators agree in same timeframe add +bonus
-  // - subtract opposite sums
-  // - include cardCount as additional prior (each +1 means +0.2 points)
   const breakdown: Record<string, number> = {};
-  let score = 0;
+  let longScore = 0;
+  let shortScore = 0;
   let indicatorCount = 0;
 
-  // naive baseline, Copilot should optimize/expand:
+  // Calculate directional scores separately for better balance
   for (const f of features) {
+    if (!f.direction) continue;
+    
     const base = (f.weight ?? 1) * (f.strength ?? 1);
     const key = `${f.name}_${f.timeframe}_${f.direction}`;
-    breakdown[key] = (breakdown[key] ?? 0) + base;
-    if (f.direction === 'long') score += base;
-    else if (f.direction === 'short') score -= base;
-    if (f.direction) indicatorCount++;
+    breakdown[key] = base;
+    
+    if (f.direction === 'long') {
+      longScore += base;
+    } else if (f.direction === 'short') {
+      shortScore += base;
+    }
+    
+    indicatorCount++;
   }
 
-  // co-occurrence bonus:
+  // **NEW: Balance enforcement to prevent extreme bias**
+  const rawScore = longScore - shortScore;
+  const maxImbalance = Math.max(longScore, shortScore) * 0.7; // Max 70% imbalance
+  
+  let balancedScore = rawScore;
+  if (Math.abs(rawScore) > maxImbalance) {
+    balancedScore = rawScore > 0 ? maxImbalance : -maxImbalance;
+    console.log(`?? Score balanced: ${rawScore.toFixed(2)} ? ${balancedScore.toFixed(2)}`);
+  }
+
+  // **NEW: Higher threshold for better quality**
+  const minIndicators = 3;
+  if (indicatorCount < minIndicators) {
+    balancedScore = 0; // Require minimum confluence
+  }
+
+  // Co-occurrence bonus (enhanced)
   const tfDirCounts: Record<string, number> = {};
   for (const k of Object.keys(breakdown)) {
-    const parts = k.split('_'); // name_timeframe_direction
+    const parts = k.split('_');
     const tf = parts[1], dir = parts[2];
     const k2 = `${tf}_${dir}`;
     tfDirCounts[k2] = (tfDirCounts[k2] ?? 0) + 1;
   }
+
   for (const k in tfDirCounts) {
     if (tfDirCounts[k] >= 3) {
-      // bonus magnitude depends on count
-      score += (tfDirCounts[k] - 2) * 0.5 * (k.endsWith('long') ? 1 : -1);
+      const bonus = (tfDirCounts[k] - 2) * 0.3; // Reduced bonus
+      balancedScore += bonus * (k.endsWith('long') ? 1 : -1);
     }
   }
 
-  // include card count (the +1/-1 historical board occurrences)
-  score += cardCount * 0.2;
+  // **NEW: Card count penalty for extreme bias**
+  const cardPenalty = Math.abs(cardCount) > 5 ? Math.abs(cardCount) * 0.1 : 0;
+  const cardContribution = cardCount * 0.15 - cardPenalty;
+  
+  const finalScore = balancedScore + cardContribution;
 
-  return { score, indicatorCount, breakdown };
+  return { 
+    score: finalScore, 
+    indicatorCount, 
+    breakdown: {
+      ...breakdown,
+      '_longTotal': longScore,
+      '_shortTotal': shortScore,
+      '_rawScore': rawScore,
+      '_cardContribution': cardContribution
+    }
+  };
 }
 
 export function estimateRunDuration(score: number, timeframesAgreement: string[]): number {
